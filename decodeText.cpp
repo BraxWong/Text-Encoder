@@ -3,28 +3,19 @@
 #include <stdio.h>
 #include <fstream>
 #include <vector>
+#include "file.cpp"
 
 class Decoder{
   public:
     void decryption(std::string fileName);
   private:
-    void writeToFile(std::vector<std::string> encodeData);
+    File file;
     std::vector<std::string> decodeFileData(std::vector<std::string> fileData);
-    std::vector<std::string> readFileData(std::string fileName);
 };
-
-void Decoder::writeToFile(std::vector<std::string> encodedData)
-{
-  std::ofstream newFile("decodedFile.txt");
-  for(int i = 0; i < encodedData.size(); ++i)
-  {
-    newFile << encodedData[i] << "\n";
-  }
-}
 
 std::vector<std::string> Decoder::decodeFileData(std::vector<std::string> fileData)
 {
-  std::vector<std::string> encodedFileData;
+  std::vector<std::string> decodedFileData;
   std::unordered_map<char, char> umap = {
     {'z', 'a'}, {'y', 'b'}, {'x', 'c'}, {'w', 'd'}, {'v', 'e'}, {'u', 'f'},
     {'t', 'g'}, {'s', 'h'}, {'r', 'i'}, {'q', 'j'}, {'p', 'k'}, {'o', 'l'},
@@ -47,24 +38,14 @@ std::vector<std::string> Decoder::decodeFileData(std::vector<std::string> fileDa
         currentNewString += dataString[j];
       }
     }
-    encodedFileData.push_back(currentNewString);
+    decodedFileData.push_back(currentNewString);
   }
-  writeToFile(encodedFileData);
-  return encodedFileData;
-}
-
-std::vector<std::string> Decoder::readFileData(std::string fileName)
-{
-  std::vector<std::string> fileData;
-  std::fstream file(fileName);
-  std::string currentLine;
-  while (getline (file, currentLine)) {
-    fileData.push_back(currentLine);
-  }
-  return decodeFileData(fileData);
+  file.writeToFile(decodedFileData, "decodedFile.txt");
+  return decodedFileData;
 }
 
 void Decoder::decryption(std::string fileName)
 {
-  this->readFileData(fileName);
+  std::vector<std::string>fileData = file.readFileData(fileName);
+  decodeFileData(fileData);
 }

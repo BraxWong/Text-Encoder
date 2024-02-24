@@ -3,24 +3,16 @@
 #include <stdio.h>
 #include <fstream>
 #include <vector>
+#include "file.cpp"
 
 class Encoder {
   public:
     void startEncryption(std::string fileName);
   private:
-    void writeToFile(std::vector<std::string> encodedData);
+    File file;
     std::vector<std::string> encodeFileData(std::vector<std::string> fileData);
-    std::vector<std::string> readFileData(std::string fileName);
 };
 
-void Encoder::writeToFile(std::vector<std::string> encodedData)
-{
-  std::ofstream newFile("encodedFile.txt");
-  for(int i = 0; i < encodedData.size(); ++i)
-  {
-    newFile << encodedData[i] << "\n";
-  }
-}
 
 std::vector<std::string> Encoder::encodeFileData(std::vector<std::string> fileData)
 {
@@ -47,22 +39,12 @@ std::vector<std::string> Encoder::encodeFileData(std::vector<std::string> fileDa
     }
     encodedFileData.push_back(currentNewString);
   }
-  writeToFile(encodedFileData);
+  file.writeToFile(encodedFileData, "encodedFile.txt");
   return encodedFileData;
 }
 
-std::vector<std::string> Encoder::readFileData(std::string fileName)
+void Encoder::startEncryption(std::string fileName)
 {
-  std::vector<std::string> fileData;
-  std::fstream file(fileName);
-  std::string currentLine;
-  while (getline (file, currentLine)) {
-    fileData.push_back(currentLine);
-  }
-  return encodeFileData(fileData);
-}
-
-void Encoder::startEncryption(std::string file)
-{
-  readFileData(file);
+  std::vector<std::string> encodedData = file.readFileData(fileName);
+  encodeFileData(encodedData);
 }
