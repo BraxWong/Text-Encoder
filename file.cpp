@@ -30,6 +30,7 @@ void File::writeToFile(std::vector<std::string> fileData,
 
 void File::appendToFile(std::string fileName) {
   while (true) {
+    bool append = true;
     std::vector<std::string> fileData = readFileData(fileName);
     std::cout
         << "Please enter the content you would like to append to the file.\n";
@@ -39,11 +40,14 @@ void File::appendToFile(std::string fileName) {
       if (fileData[i] == content) {
         std::cout << "The content already exists within the file, please try "
                      "again.\n";
+        append = false;
         break;
       }
     }
-    std::ofstream file(fileName, std::ios_base::app);
-    file << content << "\n";
+    if (append) {
+      std::ofstream file(fileName, std::ios_base::app);
+      file << content << "\n";
+    }
     std::cout << "Would you like to continue(Y/N)\n";
     std::getline(std::cin, content);
     if (content == "N" || content == "n") {
